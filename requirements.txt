@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+python-docx
+transformers
+torch
+sentencepiece
