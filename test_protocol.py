@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Протокол үүсгэх системийг тестлэх скрипт
+Протокол үүсгэх системийг тестлэх скрипт (SLM-ONLY режим)
 """
 
 import json
@@ -11,12 +11,19 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from app.preprocess import clean_text, extract_entities
-from app.summarizer import OllamaSummarizer
-from app.action_extractor import ActionItemExtractor
 from app.exporter import export_enhanced_protocol
 from datetime import date
 
-# Опционал: UDPipe
+# SLM-only imports
+try:
+    from app.summarizer import SLMOnlySummarizer
+    from app.action_extractor import SLMOnlyActionExtractor
+    SLM_AVAILABLE = True
+except ImportError as e:
+    print(f"❌ SLM модулиуд import хийгдсэнгүй: {e}")
+    SLM_AVAILABLE = False
+
+# UDPipe (optional)
 try:
     from app.nlp_processor import MongolianNLPProcessor
     nlp_processor = MongolianNLPProcessor("mn_model.udpipe")
@@ -29,11 +36,19 @@ except Exception as e:
 
 def test_with_json_file(json_path: str = "text.json"):
     """
-    text.json файлаас текст уншиж протокол үүсгэх
+    text.json файлаас текст уншиж протокол үүсгэх (SLM-ONLY)
     """
     print("\n" + "="*60)
-    print("ПРОТОКОЛ ҮҮСГЭХ СИСТЕМ ТЕСТ")
+    print("ПРОТОКОЛ ҮҮСГЭХ СИСТЕМ ТЕСТ (SLM-ONLY)")
     print("="*60 + "\n")
+    
+    # SLM шалгах
+    if not SLM_AVAILABLE:
+        print("❌ SLM модулиуд байхгүй!")
+        print("\nШаардлагатай файлууд үүсгэх:")
+        print("  1. app/slm_only_summarizer.py")
+        print("  2. app/slm_only_action_extractor.py")
+        return
     
     # 1. JSON файл уншах
     print("1️⃣  JSON файл уншиж байна...")
@@ -61,16 +76,14 @@ def test_with_json_file(json_path: str = "text.json"):
     print("\n2️⃣  Текст цэвэрлэж байна...")
     cleaned_text = clean_text(raw_text)
     print(f"   ✓ Цэвэрлэсэн текст: {len(cleaned_text)} тэмдэгт")
-    print(f"   Эхний 100 тэмдэгт: {cleaned_text[:100]}...")
     
-    # 3. Нэр, байгууллага илрүүлэх
+    # 3. Нэр илрүүлэх
     print("\n3️⃣  Нэр, байгууллага илрүүлж байна...")
-    
     if nlp_processor:
         try:
             nlp_result = nlp_processor.process_text(cleaned_text)
             entities = nlp_processor.extract_named_entities(nlp_result)
-            print(f"   ✓ UDPipe ашиглаж {len(entities)} нэр олсон")
+            print(f"   ✓ UDPipe: {len(entities)} нэр олсон")
         except Exception as e:
             print(f"   ⚠ UDPipe алдаа: {e}, rule-based ашиглана")
             entities = extract_entities(cleaned_text)
@@ -78,45 +91,66 @@ def test_with_json_file(json_path: str = "text.json"):
         entities = extract_entities(cleaned_text)
         print(f"   ✓ Rule-based: {len(entities)} нэр олсон")
     
-    print(f"   Олсон нэрс: {', '.join(entities[:10])}")
+    if entities:
+        print(f"   Олсон нэрс: {', '.join(entities[:10])}")
+    else:
+        print(f"   ⚠️  Нэр олдсонгүй")
     
-    # 4. SLM ашиглан албан хэлбэрт хөрвүүлэх
-    print("\n4️⃣  Ярианы хэлийг албан бичгийн хэл рүү хөрвүүлж байна...")
-    print("   (Энэ хэсэг Ollama-д хамаарч удаан болж магадгүй)")
+    # 4. SLM эхлүүлэх
+    print("\n4️⃣  SLM систем эхлүүлж байна...")
+    try:
+        summarizer = SLMOnlySummarizer(model="qwen2.5:7b")
+        action_extractor = SLMOnlyActionExtractor(nlp_processor)
+        print("   ✅ SLM бэлэн")
+    except RuntimeError as e:
+        print(f"\n❌ SLM ЭХЛҮҮЛЭХ АЛДАА:")
+        print(f"{e}")
+        print("\n❌ ТЕСТ ЗОГССОН - SLM ажиллахгүй байна")
+        return
+    
+    # 5. Албан хэл болгох
+    print("\n5️⃣  Ярианы хэлийг албан протокол болгож байна...")
+    print("   (SLM ашиглаж байгаа тул удаан болж магадгүй)")
     
     try:
-        summarizer = OllamaSummarizer()
         formalized_text = summarizer.formalize_text(cleaned_text)
         
-        print(f"   ✓ Амжилттай хөрвүүллээ: {len(formalized_text)} тэмдэгт")
-        print(f"   Үр дүнгийн эхлэл:\n   {formalized_text[:200]}...")
+        print(f"   ✅ Амжилттай: {len(formalized_text)} тэмдэгт")
+        print(f"   Үр дүнгийн эхлэл:\n")
+        print("   " + "-"*56)
+        for line in formalized_text[:300].split('\n')[:5]:
+            print(f"   {line}")
+        print("   " + "-"*56)
         
-    except Exception as e:
-        print(f"   ❌ Ollama алдаа: {e}")
-        print("   Цэвэрлэсэн текстийг хэрэглэнэ")
-        formalized_text = cleaned_text
+    except RuntimeError as e:
+        print(f"\n❌ АЛБАН ХЭЛ БОЛГОХ АЛДАА:")
+        print(f"{e}")
+        print("\n❌ ТЕСТ ЗОГССОН")
+        return
     
-    # 5. Action items гаргах
-    print("\n5️⃣  Ажил үүрэг, шийдвэрүүдийг илрүүлж байна...")
+    # 6. Action items гаргах
+    print("\n6️⃣  Ажил үүрэг, шийдвэрүүдийг илрүүлж байна...")
     
     try:
-        action_extractor = ActionItemExtractor(nlp_processor)
         actions = action_extractor.extract_actions_with_llm(cleaned_text)
         
-        print(f"   ✓ {len(actions)} ажил үүрэг/шийдвэр олсон")
+        print(f"   ✅ {len(actions)} ажил үүрэг/шийдвэр олсон\n")
         
         for i, action in enumerate(actions[:5], 1):
             print(f"   {i}. {action.get('who', '?')}: {action.get('action', '')[:50]}...")
+            print(f"      Хугацаа: {action.get('due', 'Тодорхойгүй')}")
         
         if len(actions) > 5:
             print(f"   ... болон бусад {len(actions) - 5}")
         
-    except Exception as e:
-        print(f"   ❌ Action extraction алдаа: {e}")
-        actions = []
+    except RuntimeError as e:
+        print(f"\n❌ АЖИЛ ҮҮРЭГ ИЛРҮҮЛЭХ АЛДАА:")
+        print(f"{e}")
+        print("\n❌ ТЕСТ ЗОГССОН")
+        return
     
-    # 6. Протокол бүтэц үүсгэх
-    print("\n6️⃣  Протокол бүтэц үүсгэж байна...")
+    # 7. Протокол бүтэц үүсгэх
+    print("\n7️⃣  Протокол бүтэц үүсгэж байна...")
     
     protocol = {
         "title": "Хурлын протокол",
@@ -125,8 +159,12 @@ def test_with_json_file(json_path: str = "text.json"):
         "body": formalized_text,
         "action_items": actions,
         "entities": entities,
-        "original_text_length": len(raw_text),
-        "formalized_text_length": len(formalized_text)
+        "metadata": {
+            "original_text_length": len(raw_text),
+            "formalized_text_length": len(formalized_text),
+            "mode": "SLM-only",
+            "model": "qwen2.5:7b"
+        }
     }
     
     print(f"   ✓ Протокол бэлэн:")
@@ -134,15 +172,16 @@ def test_with_json_file(json_path: str = "text.json"):
     print(f"      - Огноо: {protocol['date']}")
     print(f"      - Оролцогчид: {len(protocol['participants'])} хүн")
     print(f"      - Ажил үүрэг: {len(protocol['action_items'])} ширхэг")
+    print(f"      - Режим: SLM-only (Fallback байхгүй)")
     
-    # 7. DOCX файл үүсгэх
-    print("\n7️⃣  DOCX файл үүсгэж байна...")
+    # 8. DOCX файл үүсгэх
+    print("\n8️⃣  DOCX файл үүсгэж байна...")
     
     try:
         filename = export_enhanced_protocol(protocol)
         print(f"   ✓ Амжилттай: {filename}")
         
-        # Файлын хэмжээ шалгах
+        # Файлын хэмжээ
         file_size = Path(filename).stat().st_size
         print(f"   Файлын хэмжээ: {file_size:,} bytes ({file_size/1024:.1f} KB)")
         
@@ -150,52 +189,19 @@ def test_with_json_file(json_path: str = "text.json"):
         print(f"   ❌ DOCX үүсгэхэд алдаа: {e}")
         return
     
-    # 8. Дүгнэлт
+    # 9. Дүгнэлт
     print("\n" + "="*60)
     print("✅ ТЕСТ АМЖИЛТТАЙ ДУУСЛАА!")
     print("="*60)
     print(f"\n📄 Протокол файл: {filename}")
-    print(f"📊 Статистик:")
+    print(f"\n📊 Статистик:")
+    print(f"   - Режим: SLM-only (qwen2.5:7b)")
     print(f"   - Анхны текст: {len(raw_text)} тэмдэгт")
     print(f"   - Боловсруулсан: {len(formalized_text)} тэмдэгт")
+    print(f"   - Хураангуйлалт: {(1 - len(formalized_text)/len(raw_text))*100:.1f}%")
     print(f"   - Олсон нэрс: {len(entities)}")
     print(f"   - Ажил үүрэг: {len(actions)}")
-    print("\n")
-
-
-def test_simple_text():
-    """
-    Энгийн текст дээр богино тест
-    """
-    print("\n" + "="*60)
-    print("ЭНГИЙН ТЕКСТ ТЕСТ")
-    print("="*60 + "\n")
-    
-    test_text = """
-    Анна: Би энэ долоо хоногт тайлан бэлдэх болно.
-    Жон: Би шалгаж үзээд санал өгнө.
-    Тогтоол: Баасан гараг бүх ажлыг дуусгах.
-    """
-    
-    print(f"Тест текст:\n{test_text}\n")
-    
-    # Цэвэрлэх
-    cleaned = clean_text(test_text)
-    print(f"Цэвэрлэсэн: {cleaned}\n")
-    
-    # Нэр олох
-    entities = extract_entities(test_text)
-    print(f"Олсон нэрс: {entities}\n")
-    
-    # Action items
-    try:
-        action_extractor = ActionItemExtractor()
-        actions = action_extractor.extract_actions_with_llm(test_text)
-        print(f"Олсон action items: {len(actions)}")
-        for action in actions:
-            print(f"  - {action}")
-    except Exception as e:
-        print(f"Action extraction алдаа: {e}")
+    print(f"\n💡 Санамж: SLM fallback байхгүй - алдаа гарвал шууд зогсоно\n")
 
 
 def show_usage():
@@ -204,7 +210,7 @@ def show_usage():
     """
     print("""
 ╔═══════════════════════════════════════════════════════════════╗
-║           МОНГОЛ ПРОТОКОЛ ҮҮСГЭХ СИСТЕМ                       ║
+║     МОНГОЛ ПРОТОКОЛ ҮҮСГЭХ СИСТЕМ (SLM-ONLY РЕЖИМ)            ║
 ╚═══════════════════════════════════════════════════════════════╝
 
 Хэрэглэх арга:
@@ -212,24 +218,34 @@ def show_usage():
 1. JSON файлаас протокол үүсгэх:
    python test_protocol.py text.json
 
-2. Энгийн тест ажиллуулах:
-   python test_protocol.py --simple
-
-3. API server эхлүүлэх:
+2. API server эхлүүлэх:
    uvicorn app.main:app --reload
 
-4. API тестлэх (server ажиллаж байхад):
+3. API тестлэх:
    curl -X POST http://localhost:8000/generate_protocol \\
         -H "Content-Type: application/json" \\
         -d @text.json
 
+4. SLM төлөв шалгах:
+   curl http://localhost:8000/health
+
 ═══════════════════════════════════════════════════════════════
 
-Шаардлагатай зүйлс:
-✓ Python 3.8+
-✓ Ollama суулгасан (ollama pull mistral)
-✓ mn_model.udpipe файл (опционал)
-✓ requirements.txt-д байгаа сангууд
+⚠️  ЧУХАЛ: SLM-ONLY режим
+   - Fallback БАЙХГҮЙ
+   - SLM ажиллахгүй бол ЗОГСОНО
+   - Rule-based backup БАЙХГҮЙ
+
+Шаардлагатай:
+   ✓ Python 3.8+
+   ✓ Ollama суулгасан + ажиллаж байгаа
+   ✓ qwen2.5:7b model татсан
+   ✓ requirements.txt-ийн сангууд
+
+SLM бэлдэх:
+   1. ollama serve
+   2. ollama pull qwen2.5:7b
+   3. python test_protocol.py
 
 ═══════════════════════════════════════════════════════════════
 """)
@@ -241,8 +257,6 @@ if __name__ == "__main__":
         
         if arg in ['-h', '--help', 'help']:
             show_usage()
-        elif arg in ['-s', '--simple']:
-            test_simple_text()
         else:
             # JSON файлын зам дамжуулсан
             test_with_json_file(arg)

@@ -1,63 +1,88 @@
+#!/usr/bin/env python3
+"""
+SLM-ONLY Action Extractor - Fallback байхгүй
+"""
+
 import json
 import re
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 try:
     from ollama import chat
+    OLLAMA_AVAILABLE = True
 except ImportError:
-    print("⚠️  Ollama суулгаагүй байна. pip install ollama")
-    chat = None
+    OLLAMA_AVAILABLE = False
 
 
-class ActionItemExtractor:
+class SLMOnlyActionExtractor:
     """
-    Протоколоос ажил үүрэг, шийдвэрүүдийг гаргаж авах
+    Зөвхөн SLM ашиглах action extractor
     """
     
     def __init__(self, nlp_processor=None):
         self.nlp = nlp_processor
-        self.model = "mistral"
+        self.model = "qwen2.5:7b"
+        
+        # SLM бэлэн эсэх шалгах
+        if not OLLAMA_AVAILABLE:
+            raise RuntimeError(
+                "❌ Ollama суулгаагүй байна!\n"
+                "   Суулгах: pip install ollama"
+            )
+        
+        print(f"✅ Action Extractor бэлэн: {self.model}")
     
     def extract_actions_with_llm(self, text: str) -> List[Dict]:
         """
-        LLM ашиглан action items гаргах
+        SLM ашиглан action items гаргах
+        
+        Raises:
+            RuntimeError: SLM ажиллахгүй бол
         """
-        if chat is None:
-            print("⚠️  Ollama байхгүй байна, rule-based ашиглана")
-            return self._extract_actions_rule_based(text)
+        if not OLLAMA_AVAILABLE:
+            raise RuntimeError("❌ SLM ажиллахгүй байна (Ollama суулгаагүй)")
         
         system_prompt = """Та протоколоос ажил үүрэг, шийдвэр гаргадаг мэргэжилтэн.
 
-Дараах зүйлсийг олж гаргах:
-1. ХЭН юу хийх вэ (Хариуцагч)
-2. ЮУ хийх вэ (Үйлдэл/Ажил)
-3. ХЭЗЭЭ дуусгах вэ (Хугацаа)
-4. Төрөл: "шийдвэр" эсвэл "ажил"
+🎯 ОЛОХ ЗҮЙЛС:
+1. ХЭН - Хариуцагч (нэр)
+2. ЮУ - Хийх ажил
+3. ХЭЗЭЭ - Хугацаа (даваа гараг, ирэх долоо хоног гэх мэт)
+4. ТӨРӨЛ - "action" эсвэл "decision"
 
-JSON array форматаар ЗӨВХӨН дараах бүтэцтэй буцаа:
+📋 JSON ФОРМАТ (ЗӨВХӨН ЭНЭ):
 [
     {
         "who": "Хариуцагч нэр",
         "action": "Хийх ажлын тодорхойлолт",
-        "due": "Хугацаа (даваа гараг, ирэх долоо хоног гэх мэт)",
+        "due": "Хугацаа буюу 'Хугацаа заагаагүй'",
         "type": "action эсвэл decision",
-        "confidence": 0.0-1.0
+        "confidence": 0.8
     }
 ]
 
-ЧУХАЛ: 
-- Зөвхөн JSON array буцаа, нэмэлт тайлбар бичихгүй
-- Тодорхой хариуцагч, үйлдэл байхгүй бол тухайн зүйлийг орхи
-- "Тогтоол:", "Шийдвэр:" гэсэн хэсгүүдийг анхаар"""
+ЖИШЭЭ:
 
-        user_prompt = f"""Энэ хурлын протоколоос ажил үүрэг, шийдвэрүүдийг гарга:
+Текст: "Анна: Би draft даваа гарагт илгээнэ."
+JSON:
+[{"who": "Анна", "action": "draft илгээх", "due": "даваа гараг", "type": "action", "confidence": 0.9}]
+
+Текст: "Тогтоол: Ирэх долоо хоногт дуусгах."
+JSON:
+[{"who": "Хурлын шийдвэр", "action": "Ажлыг дуусгах", "due": "ирэх долоо хоног", "type": "decision", "confidence": 0.95}]
+
+⚠️ ЧУХАЛ:
+- Зөвхөн JSON array буцаа
+- Тодорхой хариуцагч, ажил байхгүй бол ОРХИ
+- "Тогтоол:", "Шийдвэр:" → type: "decision"
+- Англи хэл ашиглахгүй
+- Нэмэлт тайлбар бичихгүй"""
+
+        user_prompt = f"""Энэ протоколоос ажил үүрэг, шийдвэр гарга:
 
 {text}
 
-Жишээ өгүүлбэрүүд:
-- "Анна draft ийг даваа гарагт илгээх болно" → Анна, draft илгээх, даваа гараг, action
-- "Тогтоол: Ирэх даваа гарагт эцсийн хувилбарыг илгээх" → Тогтоол (бүгд), эцсийн хувилбар илгээх, даваа гараг, decision
-- "Би тайлангийн эхний хэсгийг бэлдэх" → Тухайн хүн, тайланг бэлдэх, тодорхойгүй, action"""
+Зөвхөн JSON array буцаа."""
 
         try:
             response = chat(
@@ -67,7 +92,7 @@ JSON array форматаар ЗӨВХӨН дараах бүтэцтэй буц�
                     {"role": "user", "content": user_prompt}
                 ],
                 options={
-                    "temperature": 0.2,  # Тогтвортой үр дүн
+                    "temperature": 0.2,
                 }
             )
             
@@ -75,26 +100,54 @@ JSON array форматаар ЗӨВХӨН дараах бүтэцтэй буц�
             
             # JSON гаргаж авах
             json_match = re.search(r'\[.*\]', content, re.DOTALL)
-            if json_match:
+            if not json_match:
+                raise RuntimeError(
+                    f"❌ SLM JSON буцаагаагүй!\n"
+                    f"   Үр дүн: {content[:200]}...\n"
+                    f"   JSON формат шаардлагатай"
+                )
+            
+            try:
                 actions = json.loads(json_match.group())
-                
-                # Validation
-                validated_actions = []
-                for action in actions:
-                    if self._validate_action(action):
-                        validated_actions.append(action)
-                
-                return validated_actions
-            else:
-                print("LLM JSON буцаагаагүй, rule-based ашиглана")
-                return self._extract_actions_rule_based(text)
+            except json.JSONDecodeError as e:
+                raise RuntimeError(
+                    f"❌ JSON parsing алдаа!\n"
+                    f"   Алдаа: {str(e)}\n"
+                    f"   SLM үр дүн: {json_match.group()[:200]}..."
+                )
+            
+            # Validation
+            validated_actions = []
+            for action in actions:
+                if self._validate_action(action):
+                    validated_actions.append(action)
+                else:
+                    print(f"   ⚠️  Буруу бүтэцтэй action алгассан: {action}")
+            
+            if not validated_actions:
+                raise RuntimeError(
+                    f"❌ Зөв action олдсонгүй!\n"
+                    f"   SLM {len(actions)} action буцаасан боловч\n"
+                    f"   бүгд буруу бүтэцтэй байна"
+                )
+            
+            print(f"   ✅ SLM: {len(validated_actions)} action олсон")
+            return validated_actions
             
         except json.JSONDecodeError as e:
-            print(f"JSON parsing алдаа: {e}")
-            return self._extract_actions_rule_based(text)
+            raise RuntimeError(
+                f"❌ JSON parsing алдаа!\n"
+                f"   {str(e)}"
+            )
         except Exception as e:
-            print(f"Action extraction алдаа: {e}")
-            return self._extract_actions_rule_based(text)
+            if isinstance(e, RuntimeError):
+                raise  # Манай алдааг дахин шидэх
+            else:
+                raise RuntimeError(
+                    f"❌ Action extraction алдаа!\n"
+                    f"   Model: {self.model}\n"
+                    f"   Алдаа: {str(e)}"
+                )
     
     def _validate_action(self, action: Dict) -> bool:
         """
@@ -112,128 +165,6 @@ JSON array форматаар ЗӨВХӨН дараах бүтэцтэй буц�
             return False
         
         return True
-    
-    def _extract_actions_rule_based(self, text: str) -> List[Dict]:
-        """
-        Rule-based action extraction (fallback)
-        """
-        actions = []
-        
-        # Шийдвэр гаргах хэсгийг хайх
-        decision_section = self._extract_decisions(text)
-        actions.extend(decision_section)
-        
-        # Хувь хүний ажил үүргийг хайх
-        individual_actions = self._extract_individual_actions(text)
-        actions.extend(individual_actions)
-        
-        return actions
-    
-    def _extract_decisions(self, text: str) -> List[Dict]:
-        """
-        "Тогтоол:", "Шийдвэр:" хэсгүүдээс мэдээлэл гаргах
-        """
-        decisions = []
-        
-        # Тогтоол/шийдвэр хэсгийг олох
-        decision_patterns = [
-            r'[Тт]огтоол\s*:\s*([^.]+)',
-            r'[Шш]ийдвэр\s*:\s*([^.]+)',
-            r'[Тт]огтсон\s*:\s*([^.]+)',
-        ]
-        
-        for pattern in decision_patterns:
-            matches = re.finditer(pattern, text, re.IGNORECASE)
-            for match in matches:
-                decision_text = match.group(1).strip()
-                
-                due_date = self._extract_due_date(decision_text)
-                
-                decisions.append({
-                    "who": "Хурлын шийдвэр",
-                    "action": decision_text,
-                    "due": due_date,
-                    "type": "decision",
-                    "confidence": 0.8
-                })
-        
-        return decisions
-    
-    def _extract_individual_actions(self, text: str) -> List[Dict]:
-        """
-        Хувь хүний ажил үүргийг гаргах
-        """
-        actions = []
-        
-        # Монгол хэлний action үйлдэл үгс
-        action_verbs = [
-            "хийнэ", "илгээнэ", "бэлдэнэ", "гаргана", "хүргүүлнэ",
-            "хийх", "илгээх", "бэлдэх", "гаргах", "хүргүүлэх",
-            "хийж", "илгээж", "бэлдэж", "гаргаж", "хүргүүлж",
-            "дуусгах", "эхлэх", "үргэлжлүүлэх", "review хийх",
-            "санал өгөх", "шалгах", "нэгтгэх"
-        ]
-        
-        verb_pattern = '|'.join(action_verbs)
-        
-        # Pattern: Нэр: Үйлдэл
-        pattern1 = r'([А-ЯЁҮӨ][а-яёүө]+)\s*:\s*([^.]*(?:' + verb_pattern + r')[^.]*)'
-        
-        matches = re.finditer(pattern1, text, re.IGNORECASE)
-        for match in matches:
-            who = match.group(1).strip()
-            action_text = match.group(2).strip()
-            
-            if len(action_text) > 10:  # Утга бүхий үйлдэл эсэх
-                due_date = self._extract_due_date(action_text)
-                
-                actions.append({
-                    "who": who,
-                    "action": action_text,
-                    "due": due_date,
-                    "type": "action",
-                    "confidence": 0.7
-                })
-        
-        # Pattern: Би/Миний ... үйлдэл
-        pattern2 = r'([А-ЯЁҮӨ][а-яёүө]+)\s*:\s*[Бб]и\s+([^.]*(?:' + verb_pattern + r')[^.]*)'
-        
-        matches = re.finditer(pattern2, text, re.IGNORECASE)
-        for match in matches:
-            who = match.group(1).strip()
-            action_text = match.group(2).strip()
-            
-            if len(action_text) > 10:
-                due_date = self._extract_due_date(action_text)
-                
-                actions.append({
-                    "who": who,
-                    "action": action_text,
-                    "due": due_date,
-                    "type": "action",
-                    "confidence": 0.75
-                })
-        
-        return actions
-    
-    def _extract_due_date(self, text: str) -> str:
-        """
-        Хугацаа илрүүлэх
-        """
-        date_patterns = [
-            (r'(даваа|мягмар|лхагва|пүрэв|баасан|бямба|ням)\s+гараг', 'weekday'),
-            (r'ирэх\s+(долоо\s+хоног|сар)', 'relative'),
-            (r'\d{4}[-/]\d{1,2}[-/]\d{1,2}', 'absolute'),
-            (r'\d{1,2}[-/]\d{1,2}', 'month_day'),
-            (r'өнөөдөр|маргааш|нөгөөдөр', 'relative_day'),
-        ]
-        
-        for pattern, date_type in date_patterns:
-            match = re.search(pattern, text, re.IGNORECASE)
-            if match:
-                return match.group()
-        
-        return "Хугацаа заагаагүй"
     
     def extract_action_summary(self, actions: List[Dict]) -> Dict:
         """
@@ -264,3 +195,63 @@ JSON array форматаар ЗӨВХӨН дараах бүтэцтэй буц�
                 summary["without_deadline"] += 1
         
         return summary
+
+
+# ============================================
+# ТЕСТЛЭХ КОД
+# ============================================
+
+def test_slm_action_extractor():
+    """
+    Action extractor тестлэх
+    """
+    print("\n" + "="*60)
+    print("SLM-ONLY ACTION EXTRACTOR ТЕСТ")
+    print("="*60 + "\n")
+    
+    try:
+        extractor = SLMOnlyActionExtractor()
+        
+        test_text = """
+        Анна: Би draft даваа гарагт илгээнэ.
+        Жон: Би review хийж сэтгэгдэл өгнө.
+        Тогтоол: Ирэх долоо хоногт эцсийн хувилбарыг илгээх.
+        """
+        
+        print("Анхны текст:")
+        print(test_text)
+        print("\n" + "-"*60 + "\n")
+        
+        actions = extractor.extract_actions_with_llm(test_text)
+        
+        print("✅ Олсон action items:\n")
+        for i, action in enumerate(actions, 1):
+            print(f"{i}. {action['who']}: {action['action']}")
+            print(f"   Хугацаа: {action.get('due', 'Тодорхойгүй')}")
+            print(f"   Төрөл: {action.get('type', 'unknown')}")
+            print()
+        
+        # Summary
+        summary = extractor.extract_action_summary(actions)
+        print("-"*60)
+        print(f"Нийт: {summary['total_actions']} ажил үүрэг")
+        print(f"Төрөл: {summary['by_type']}")
+        print(f"Хугацаатай: {summary['with_deadline']}, "
+              f"Хугацаагүй: {summary['without_deadline']}")
+        
+        print("\n" + "="*60)
+        print("✅ АМЖИЛТТАЙ!")
+        print("="*60 + "\n")
+        
+    except RuntimeError as e:
+        print("\n" + "="*60)
+        print("❌ АЛДАА ГАРЛАА")
+        print("="*60)
+        print(f"\n{str(e)}\n")
+        return False
+    
+    return True
+
+
+if __name__ == "__main__":
+    test_slm_action_extractor()
