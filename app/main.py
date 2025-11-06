@@ -8,7 +8,7 @@ from app.preprocess import clean_text, extract_entities
 # SLM-only imports
 try:
     from app.summarizer import SLMOnlySummarizer
-    from app._action_extractor import SLMOnlyActionExtractor
+    from app.action_extractor import SLMOnlyActionExtractor
     SLM_AVAILABLE = True
 except ImportError as e:
     SLM_AVAILABLE = False

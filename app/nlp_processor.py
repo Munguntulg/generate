@@ -1,4 +1,5 @@
 from ufal.udpipe import Model, Pipeline
+from typing import Dict, List 
 
 class MongolianNLPProcessor:
     def __init__(self, model_path="mn_model.udpipe"):
