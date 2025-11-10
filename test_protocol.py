@@ -46,8 +46,8 @@ def test_with_json_file(json_path: str = "text.json"):
     if not SLM_AVAILABLE:
         print("❌ SLM модулиуд байхгүй!")
         print("\nШаардлагатай файлууд үүсгэх:")
-        print("  1. app/slm_only_summarizer.py")
-        print("  2. app/slm_only_action_extractor.py")
+        print("  1. app/summarizer.py")
+        print("  2. app/action_extractor.py")
         return
     
     # 1. JSON файл уншах

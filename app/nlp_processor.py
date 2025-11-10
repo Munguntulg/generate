@@ -4,7 +4,17 @@ from typing import Dict, List
 class MongolianNLPProcessor:
     def __init__(self, model_path="mn_model.udpipe"):
         self.model = Model.load(model_path)
-        self.pipeline = Pipeline(self.model, "tokenize", ...)
+        if not self.model:
+            raise Exception(f"UDPipe модел ачаалагдсангүй: {model_path}")
+        
+        # БҮРЭН ПАРАМЕТР
+        self.pipeline = Pipeline(
+            self.model,
+            "tokenize",           # Tokenize options
+            Pipeline.DEFAULT,     # Tagger options  
+            Pipeline.DEFAULT,     # Parser options
+            "conllu"             # Output format
+        )
     
     def process_text(self, text: str) -> Dict:
         """

@@ -15,15 +15,48 @@ def clean_text(text: str) -> str:
 
 def extract_entities(text: str) -> List[str]:
     """
-    Regex ашиглан нэр, байгууллага илрүүлэх (UDPipe байхгүй үед)
+    САЙЖРУУЛСАН Regex - илүү олон pattern
     """
-    # Хүний нэр: Б.Анударь, Д.Тэмүүлэн
-    person_pattern = r"[А-ЯЁҮӨ][а-яёүө]+(?:\s[А-ЯЁҮӨ][а-яёүө]+|\.?[А-ЯЁҮӨ][а-яёүө]+)"
+    entities = set()
     
-    # Байгууллага: Төрийн банк, Их сургууль
-    org_pattern = r"[А-ЯЁҮӨ][а-яёүө]+(?:\s[А-ЯЁҮӨ][а-яёүө]+)*(?:\s(банк|их сургууль|ххк|төв))"
+    # 1. "Нэр:" формат (Хамгийн найдвартай)
+    # Жишээ: Анна:, Жон:, Бат:
+    colon_pattern = r'\b([А-ЯЁҮӨ][а-яёүө]{1,15})\s*:'
+    names_with_colon = re.findall(colon_pattern, text)
+    entities.update(names_with_colon)
     
-    persons = re.findall(person_pattern, text)
-    orgs = re.findall(org_pattern, text)
+    # 2. Овогтой нэр (Б.Анна, Д.Тэмүүлэн)
+    initial_name = r'\b[А-ЯЁҮӨ]\.[А-ЯЁҮӨ][а-яёүө]+'
+    entities.update(re.findall(initial_name, text))
     
-    return list(set(persons + orgs))
+    # 3. Бүтэн нэр (Доржийн Батаа)
+    full_name = r'\b[А-ЯЁҮӨ][а-яёүө]+(?:ийн|ын)\s+[А-ЯЁҮӨ][а-яёүө]+'
+    entities.update(re.findall(full_name, text))
+    
+    # 4. Байгууллага
+    org_keywords = [
+        'банк', 'их сургууль', 'ххк', 'төв', 'газар', 
+        'яам', 'компани', 'корпораци', 'холбоо', 'нийгэмлэг'
+    ]
+    
+    for keyword in org_keywords:
+        # Том үсэгтэй эхлэх + keyword
+        pattern = r'[А-ЯЁҮӨ][а-яёүө]+(?:\s+[А-ЯЁҮӨ][а-яёүө]+)*\s+' + keyword
+        orgs = re.findall(pattern, text, re.IGNORECASE)
+        entities.update(orgs)
+    
+    # 5. Газар нэр (Улаанбаатар, Дархан-Уул)
+    place_suffixes = ['хот', 'аймаг', 'сум', 'дүүрэг']
+    for suffix in place_suffixes:
+        pattern = r'[А-ЯЁҮӨ][а-яёүө]+(?:[-\s][А-ЯЁҮӨ][а-яёүө]+)?\s+' + suffix
+        places = re.findall(pattern, text, re.IGNORECASE)
+        entities.update(places)
+    
+    # 6. "Тогтоол", "Шийдвэр" хасах (хүний нэр биш)
+    false_positives = {'Тогтоол', 'Шийдвэр', 'Санал', 'Дүгнэлт', 'Хэлэлцсэн'}
+    entities = entities - false_positives
+    
+    # 7. Хэт богино арилгах (1-2 үсэг)
+    entities = {e for e in entities if len(e) > 2}
+    
+    return sorted(list(entities))

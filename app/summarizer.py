@@ -13,7 +13,7 @@ except ImportError:
     OLLAMA_AVAILABLE = False
 
 
-class ImprovedSLMSummarizer:
+class SLMOnlySummarizer:
     """
     Сайжруулсан prompt, нарийвчилсан validation
     """
@@ -366,7 +366,7 @@ if __name__ == "__main__":
     print("="*60 + "\n")
     
     try:
-        summarizer = ImprovedSLMSummarizer(model="qwen2.5:7b")
+        summarizer = SLMOnlySummarizer(model="qwen2.5:7b")
         
         test_text = """
         Анна: Би энэ ажлыг даваа гарагт хийх болно шүү дээ.
