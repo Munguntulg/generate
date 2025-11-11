@@ -9,6 +9,8 @@ from pathlib import Path
 
 # Локал модулиудыг import хийх
 sys.path.insert(0, str(Path(__file__).parent))
+from ufal.udpipe import Model, Pipeline
+import os
 
 from app.preprocess import clean_text, extract_entities
 from app.exporter import export_enhanced_protocol
@@ -26,13 +28,21 @@ except ImportError as e:
 # UDPipe (optional)
 try:
     from app.nlp_processor import MongolianNLPProcessor
-    nlp_processor = MongolianNLPProcessor("mn_model.udpipe")
-    print("✓ UDPipe модель ачаалагдлаа")
-except Exception as e:
-    print(f"⚠ UDPipe ачаалагдсангүй: {e}")
-    print("  Rule-based extraction ашиглана")
-    nlp_processor = None
 
+    # Модель байрлах замыг тодорхой зааж байна
+    model_path = os.path.join(os.path.dirname(__file__), "mn_model.udpipe")
+
+    # Файл байгаа эсэхийг шалга
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Файл олдсонгүй: {model_path}")
+    # Модель ачаалах
+    nlp_processor = MongolianNLPProcessor(model_path)
+    print("✅ UDPipe модель амжилттай ачаалагдлаа:", model_path)
+
+except Exception as e:
+    print(f"⚠️ UDPipe ачаалагдсангүй: {e}")
+    print("👉 Rule-based extraction ашиглана")
+    nlp_processor = None
 
 def test_with_json_file(json_path: str = "text.json"):
     """

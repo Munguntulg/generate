@@ -9,29 +9,29 @@ __author__ = "Protocol Generator Team"
 
 # Модулиудыг экспорт хийх
 from .preprocess import clean_text, extract_entities
-from .exporter import export_protocol, export_enhanced_protocol
+from .exporter import export_enhanced_protocol
 
+# Optional модулиуд
 try:
     from .nlp_processor import MongolianNLPProcessor
 except ImportError:
     MongolianNLPProcessor = None
 
 try:
-    from .summarizer import OllamaSummarizer
+    from .summarizer import SLMOnlySummarizer
 except ImportError:
-    OllamaSummarizer = None
+    SLMOnlySummarizer = None
 
 try:
-    from .action_extractor import ActionItemExtractor
+    from .action_extractor import SLMOnlyActionExtractor
 except ImportError:
-    ActionItemExtractor = None
+    SLMOnlyActionExtractor = None
 
 __all__ = [
     "clean_text",
     "extract_entities",
-    "export_protocol",
     "export_enhanced_protocol",
     "MongolianNLPProcessor",
-    "OllamaSummarizer",
-    "ActionItemExtractor",
+    "SLMOnlySummarizer",
+    "SLMOnlyActionExtractor",
 ]
