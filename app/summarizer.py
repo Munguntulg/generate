@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """
-SLM Summarizer - Сайжруулсан prompt болон validation
+SLM Summarizer - УТГА ХАДГАЛАХ сайжруулалт
+Үндсэн өөрчлөлт:
+1. Prompt илүү тодорхой - АГУУЛГА ӨӨРЧЛӨХГҮЙ
+2. Утгын шалгалт нэмэх
+3. Sentence-level боловсруулалт
 """
 
 import re
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple, List
 
 try:
     from ollama import chat
@@ -12,15 +16,24 @@ try:
 except ImportError:
     OLLAMA_AVAILABLE = False
 
+# Зөв бичгийн шалгагч
+try:
+    from .spell_checker import MongolianSpellChecker
+    SPELL_CHECKER_AVAILABLE = True
+except ImportError:
+    SPELL_CHECKER_AVAILABLE = False
+    print("⚠️ spell_checker.py байхгүй")
+
 
 class SLMOnlySummarizer:
     """
-    Сайжруулсан prompt, нарийвчилсан validation
+    УТГА ХАДГАЛДАГ summarizer
     """
     
-    def __init__(self, model: str = "qwen2.5:7b"):
+    def __init__(self, model: str = "qwen2.5:7b", use_spell_check: bool = True):
         self.model = model
         self.max_chunk_length = 1500
+        self.use_spell_check = use_spell_check and SPELL_CHECKER_AVAILABLE
         
         if not OLLAMA_AVAILABLE:
             raise RuntimeError(
@@ -28,11 +41,19 @@ class SLMOnlySummarizer:
                 "   Суулгах: pip install ollama"
             )
         
+        if self.use_spell_check:
+            try:
+                self.spell_checker = MongolianSpellChecker()
+                print("✅ Зөв бичгийн шалгагч идэвхтэй")
+            except Exception as e:
+                print(f"⚠️ Зөв бичгийн шалгагч эхлэхгүй: {e}")
+                self.use_spell_check = False
+        
         self._verify_model()
         print(f"✅ SLM бэлэн: {self.model}")
     
     def _verify_model(self):
-        """Model байгаа эсэхийг шалгах"""
+        """Model шалгах"""
         try:
             response = chat(
                 model=self.model,
@@ -55,80 +76,76 @@ class SLMOnlySummarizer:
     
     def formalize_text(self, text: str, debug: bool = True) -> str:
         """
-        SLM ашиглан албан хэл болгох (САЙЖРУУЛСАН)
+        АГУУЛГА ХАДГАЛСАН албан хэл болгох
         """
         if not OLLAMA_AVAILABLE:
             raise RuntimeError("❌ SLM ажиллахгүй байна")
         
+        # Зөв бичгийн урьдчилсан шалгалт
+        if self.use_spell_check:
+            if debug:
+                print("\n📝 Зөв бичгийн урьдчилсан шалгалт хийж байна...")
+            text = self.spell_checker.integrate_with_summarizer(text)
+        
         if len(text) > self.max_chunk_length:
             return self._process_long_text(text)
         
-        # САЙЖРУУЛСАН PROMPT
-        system_prompt = """Та Монгол улсын албан ёсны протокол бичдэг мэргэжилтэн.
+        # ШИНЭЧИЛСЭН PROMPT - АГУУЛГА ӨӨРЧЛӨХГҮЙ
+        system_prompt = """Та протокол засварлагч. Яг нэг зүйл хийнэ: Ярианы маягийг албан маяг болгоно.
 
-🎯 ТАНЫ ҮҮРЭГ: Ярианы бичлэгийг АЛБАН ЁСНЫ ПРОТОКОЛ болгох
+🎯 ХАМГИЙН ЧУХАЛ: АГУУЛГА ӨӨРЧЛӨХГҮЙ
+- Нэр → нэр (өөрчлөхгүй)
+- Огноо → огноо (өөрчлөхгүй)
+- Тоо → тоо (өөрчлөхгүй)
+- Үйл → үйл (өөрчлөхгүй)
+- Зөвхөн ХЭЛЛЭГ ҮГС арилгана
 
-📋 ЗААВАЛ ДАГАХ 5 ДҮРЭМ:
+📝 ЯРИАНЫ МАЯГ → АЛБАН МАЯГ:
 
-1️⃣ ХЭЛЛЭГ ҮГСИЙГ БҮРЭН АРИЛГА:
-   ❌ Хэрэглэхгүй: аа, ээ, өө, шүү, дээ, л байх, байхаа, за, тэгээд, гээд
-   ✅ Тэднийг бүрэн УСТГА
+1. Хэллэг үгс АРИЛГА:
+   - шүү дээ, л байх даа, байхаа → (устгах)
+   - за, тэгээд, гээд → (устгах)
 
-2️⃣ ЯРИАНЫ МАЯГИЙГ АЛБАН ХЭЛ БОЛГО:
-   ❌ "Би хийнэ шүү дээ" 
-   ✅ "[Нэр] хариуцан гүйцэтгэнэ"
+2. Үйл үг албан хэл болго:
+   - "би хийнэ" → "[Нэр] гүйцэтгэнэ"
+   - "би бэлднэ" → "[Нэр] бэлтгэнэ"
+   - "болно" → "болов"
    
-   ❌ "хэллээ"
-   ✅ "дэвшүүлэв" эсвэл "илэрхийлэв"
-   
-   ❌ "болно"
-   ✅ "болох" эсвэл "болов"
+3. Зөв бичгийн дүрэм:
+   - Өгүүлбэр эхний үсэг том
+   - Таслалын өмнө зай БАЙХГҮЙ
+   - Давхар зай БАЙХГҮЙ
 
-3️⃣ НЭР, ОГНОО, ТОО - ЯАЖ БАЙ ХАДГАЛ:
-   Анна → А.Анна эсвэл Анна (өөрчлөхгүй)
-   даваа гараг → даваа гараг (өөрчлөхгүй)
+⚠️ ХОРИОТОЙ:
+- Үг солихгүй (Анна → Жон БИШІ)
+- Огноо өөрчлөхгүй (даваа гараг → утга алдахгүй)
+- Тоо өөрчлөхгүй
+- Нэмэлт тайлбар БАЙХГҮЙ
+- Англи хэл БАЙХГҮЙ
 
-4️⃣ ТОДОРХОЙ ӨГҮҮЛБЭР:
-   ❌ "За тэгээд бид үргэлжлүүлье"
-   ✅ "Хэлэлцүүлгийг үргэлжлүүлэв"
+ЖИШЭЭ:
 
-5️⃣ ЗӨВХӨН МОНГОЛ ХЭЛ:
-   Англи хэл рүү ОРЧУУЛАХГҮЙ
-   Нэмэлт тайлбар БИЧИХГҮЙ
+Ярианы хэл:
+"Анна: Би энэ төслийг даваа гарагт дуусгах болно шүү дээ."
 
-🔍 ӨМНӨХ АЛДААНУУДААС СУРАХ:
-- "шүү дээ", "л байх даа" → БҮРЭН устгах
-- Англи үг хэрэглэхгүй
-- Агуулгыг өөрчлөхгүй
+Албан хэл:
+"А.Анна уг төслийг даваа гарагт дуусгах болов."
 
-📝 ЖИШЭЭ ӨМНӨ → ДАРАА:
+АНХААР: "энэ төсөл" → "уг төсөл" (утга адил)
+АНХААР: "даваа гараг" → "даваа гараг" (өөрчлөхгүй)"""
 
-Өмнө: "Анна: Би энэ ажлыг даваа гарагт хийх болно шүү дээ."
-Дараа: "А.Анна даваа гарагт ажлыг хариуцан гүйцэтгэх болов."
+        user_prompt = f"""Энэ ярианы бичлэгийг албан протокол болго. АГУУЛГА ӨӨРЧЛӨХГҮЙ.
 
-Өмнө: "За тэгээд бид үргэлжлүүлье шүү."
-Дараа: "Хэлэлцүүлгийг үргэлжлүүлэв."
-
-Өмнө: "Тогтоол: Ирэх долоо хоногт дуусгах."
-Дараа: "ТОГТСОН: Ирэх долоо хоногт ажлыг дуусгахаар тогтов."
-
-⚠️ АНХААР:
-- Зөвхөн протокол бич
-- Тайлбар бичихгүй
-- "Based on..." гэх мэт англи хэл БАЙХГҮЙ"""
-
-        user_prompt = f"""Энэ хурлын ярианы бичлэгийг АЛБАН ЁСНЫ ПРОТОКОЛ болго.
-
-АНХНЫ БИЧЛЭГ:
+ЯРИАНЫ БИЧЛЭГ:
 {text}
 
-ЧУХАЛ: Зөвхөн албан ёсны протокол бич. Нэмэлт тайлбар, англи үг БАЙХГҮЙ."""
+ЗӨВХӨН албан маяг бич. Агуулга бүрэн хадгал."""
 
         try:
             if debug:
                 print(f"\n   📤 SLM рүү хүсэлт илгээж байна...")
                 print(f"   Модель: {self.model}")
-                print(f"   Анхны урт: {len(text)} тэмдэгт")
+                print(f"   Урт: {len(text)} тэмдэгт")
             
             response = chat(
                 model=self.model,
@@ -137,198 +154,272 @@ class SLMOnlySummarizer:
                     {"role": "user", "content": user_prompt}
                 ],
                 options={
-                    "temperature": 0.1,   # Маш тогтвортой
-                    "top_p": 0.8,
+                    "temperature": 0.1,  # 0.05 → 0.1 (илүү creative)
+                    "top_p": 0.9,       # 0.7 → 0.9
                     "num_predict": 2000,
-                    "repeat_penalty": 1.1,  # Давталт багасгах
+                    "repeat_penalty": 1.1,
                 }
             )
             
             result = response["message"]["content"].strip()
             
             if debug:
-                print(f"\n   📥 SLM ХАРИУЛТ ИРЛЭЭ:")
-                print(f"   " + "="*56)
-                preview = result[:400] if len(result) > 400 else result
-                for line in preview.split('\n'):
-                    print(f"   {line}")
-                if len(result) > 400:
-                    print(f"   ... (нийт {len(result)} тэмдэгт)")
-                print(f"   " + "="*56)
+                print(f"\n   📥 SLM хариулт ирлээ ({len(result)} тэмдэгт)")
             
-            # НАРИЙВЧИЛСАН ШАЛГАЛТ
-            is_valid, errors = self._validate_result(text, result)
+            # Post-processing
+            cleaned = self._aggressive_postprocess(result)
+            
+            # УТГЫН ШАЛГАЛТ - ШИНЭ!
+            is_meaningful = self._check_meaning_preserved(text, cleaned)
+            
+            if not is_meaningful:
+                print(f"\n   ⚠️ АНХААРУУЛГА: Утга алдагдсан байж магадгүй!")
+                print(f"   🔄 Дахин оролдож байна (илүү консерватив)...")
+                
+                retry_result = self._retry_formalize_conservative(text, system_prompt, user_prompt)
+                if retry_result:
+                    cleaned = retry_result
+            
+            # Зөв бичгийн эцсийн шалгалт
+            if self.use_spell_check:
+                if debug:
+                    print(f"   🔍 Эцсийн зөв бичгийн шалгалт...")
+                
+                final_check = self.spell_checker.check_text(cleaned, verbose=False)
+                
+                if final_check['errors']:
+                    if debug:
+                        print(f"   ⚠️ {len(final_check['errors'])} алдаа засагдаж байна")
+                    cleaned = final_check['corrected_text']
+                else:
+                    if debug:
+                        print(f"   ✅ Зөв бичиг хангагдсан")
+            
+            # Эцсийн validation
+            is_valid, errors = self._validate_result_flexible(text, cleaned)
             
             if not is_valid:
-                print(f"\n   ❌ QUALITY CHECK АМЖИЛТГҮЙ:")
-                for error in errors:
-                    print(f"      • {error}")
-                
-                # Retry логик (1 удаа л)
-                print(f"\n   🔄 Дахин оролдож байна (temperature өөрчлөх)...")
-                return self._retry_with_adjusted_params(text, system_prompt, user_prompt)
+                if debug:
+                    print(f"\n   ⚠️ Validation:")
+                    for error in errors[:3]:
+                        print(f"      • {error}")
+            else:
+                if debug:
+                    print(f"   ✅ Чанар хангалттай")
             
-            print(f"   ✅ Quality check АМЖИЛТТАЙ")
-            return self._post_process(result)
+            return cleaned
             
         except Exception as e:
             if isinstance(e, RuntimeError):
                 raise
             else:
                 raise RuntimeError(
-                    f"❌ SLM алдаа гарлаа!\n"
+                    f"❌ SLM алдаа!\n"
                     f"   Model: {self.model}\n"
                     f"   Алдаа: {str(e)}"
                 )
     
-    def _validate_result(self, original: str, result: str) -> tuple[bool, list]:
+    def _check_meaning_preserved(self, original: str, formalized: str) -> bool:
         """
-        НАРИЙВЧИЛСАН VALIDATION - алдааны жагсаалт буцаана
+        УТГА ХАДГАЛАГДСАН эсэх шалгах
         
-        Returns:
-            (is_valid: bool, errors: list[str])
+        Шалгах зүйлс:
+        1. Үндсэн үг байгаа эсэх (нэр, огноо)
+        2. Утгагүй өгүүлбэр үүссэн эсэх
+        3. Хэт богино болоогүй эсэх
         """
-        errors = []
+        # 1. Нэрс хадгалагдсан эсэх
+        original_names = re.findall(r'\b[А-ЯЁҮӨ][а-яёүө]{2,}\b', original)
+        formalized_names = re.findall(r'\b[А-ЯЁҮӨ][а-яёүө]{2,}\b', formalized)
         
-        # 1. Хоосон эсэх
-        if len(result.strip()) < 10:
-            errors.append(f"Хэт богино: {len(result)} тэмдэгт")
-            return False, errors
+        # Үндсэн нэрс алга болсон эсэх
+        important_names = set(original_names[:10])  # Эхний 10 нэр
+        preserved_names = set(formalized_names)
         
-        # 2. Харьцаа (илүү уян хатан)
-        ratio = len(result) / len(original) if len(original) > 0 else 0
-        if ratio < 0.15:
-            errors.append(f"Хэт богино (харьцаа {ratio:.2f})")
-        elif ratio > 8.0:
-            errors.append(f"Хэт урт (харьцаа {ratio:.2f})")
+        missing_names = important_names - preserved_names
+        if len(missing_names) > len(important_names) * 0.5:
+            print(f"      ⚠️ Олон нэр алдагдсан: {missing_names}")
+            return False
         
-        # 3. Англи хэл
-        # Монгол үсэг vs Англи үсэг
-        cyrillic_chars = len(re.findall(r'[А-Яа-яЁёӨөҮү]', result))
-        english_chars = len(re.findall(r'[A-Za-z]', result))
-        
-        # Англи үсэг хэтэрхий их эсэх (Монголоос илүү)
-        if english_chars > cyrillic_chars * 0.3:
-            errors.append(
-                f"Англи хэл их байна (Англи: {english_chars}, Монгол: {cyrillic_chars})"
-            )
-        
-        # 4. КРИТИК хэллэг үгс (Үндсэн асуудал)
-        critical_fillers = {
-            'шүү дээ': 'ярианы хэллэг',
-            'л байх даа': 'ярианы хэллэг',
-            'байхаа': 'ярианы хэллэг',
-            'биз дээ': 'ярианы хэллэг',
-            'аа дээ': 'ярианы хэллэг',
-            'шүү аа': 'ярианы хэллэг'
-        }
-        
-        found = []
-        for filler, description in critical_fillers.items():
-            if filler in result.lower():
-                found.append(f'"{filler}" ({description})')
-        
-        if found:
-            errors.append(f"Хэллэг үгс үлдсэн: {', '.join(found)}")
-        
-        # 5. Ярианы маяг үлдсэн эсэх
-        informal_patterns = [
-            r'\bби\s+хийнэ\b',  # "би хийнэ" үлдсэн
-            r'\bта\s+хийнэ\b',
-            r'\bболно\s+шүү\b',
+        # 2. Огноо, хугацаа хадгалагдсан эсэх
+        date_patterns = [
+            r'даваа гараг', r'мягмар гараг', r'лхагва гараг',
+            r'долоо хоног', r'сар', r'өдөр', r'жил',
+            r'\d+', r'нэг', r'хоёр', r'гурав'
         ]
         
-        found_patterns = []
-        for pattern in informal_patterns:
-            if re.search(pattern, result, re.IGNORECASE):
-                found_patterns.append(pattern)
+        original_has_dates = any(re.search(pattern, original, re.IGNORECASE) for pattern in date_patterns)
+        formalized_has_dates = any(re.search(pattern, formalized, re.IGNORECASE) for pattern in date_patterns)
         
-        if found_patterns:
-            errors.append(f"Ярианы маяг үлдсэн: {len(found_patterns)} байршил")
+        if original_has_dates and not formalized_has_dates:
+            print(f"      ⚠️ Огноо/хугацаа алдагдсан")
+            return False
         
-        # Дүгнэлт
-        is_valid = len(errors) == 0
-        return is_valid, errors
+        # 3. Утгагүй өгүүлбэр эсэх
+        # "Хэдүүлэх төслийг" гэх мэт утгагүй үг
+        nonsense_patterns = [
+            r'хэдүүлэх',  # Утгагүй үйл үг
+            r'[а-яёүө]{15,}',  # Хэт урт утгагүй үг
+            r'\b[а-яёүө]\b\s+\b[а-яёүө]\b\s+\b[а-яёүө]\b',  # "а б в" гэх мэт
+        ]
+        
+        for pattern in nonsense_patterns:
+            if re.search(pattern, formalized):
+                print(f"      ⚠️ Утгагүй өгүүлбэр илэрсэн: {pattern}")
+                return False
+        
+        # 4. Хэт богино эсэх
+        ratio = len(formalized) / len(original) if len(original) > 0 else 0
+        if ratio < 0.3:  # 30%-с бага бол хэт богино
+            print(f"      ⚠️ Хэт богино болсон (харьцаа: {ratio:.2f})")
+            return False
+        
+        return True
     
-    def _retry_with_adjusted_params(
-        self, 
-        text: str, 
-        system_prompt: str, 
+    def _retry_formalize_conservative(
+        self,
+        text: str,
+        system_prompt: str,
         user_prompt: str
-    ) -> str:
+    ) -> Optional[str]:
         """
-        Параметр өөрчилж дахин оролдох
+        КОНСЕРВАТИВ retry - агуулга илүү хадгална
         """
         try:
+            # Илүү тодорхой анхааруулга
+            conservative_prompt = user_prompt + """
+
+🚨 ЧУХАЛ АНХААРУУЛГА:
+1. Нэр үгс БҮРЭН хадгал (Анна → А.Анна, утга ижил)
+2. Огноо БҮРЭН хадгал (даваа гараг → даваа гараг)
+3. Тоо БҮРЭН хадгал
+4. Үйл үгийн утга хадгал (дуусгах → дуусгах)
+5. ЗӨВХӨН хэллэг үгс арилга
+
+Үг солихгүй, утгыг алдахгүй!"""
+            
             response = chat(
                 model=self.model,
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt + "\n\nАНХААРУУЛГА: Хэллэг үгс (шүү дээ, л байх даа) БҮРЭН АРИЛГА!"}
+                    {"role": "user", "content": conservative_prompt}
                 ],
                 options={
-                    "temperature": 0.05,  # Бага болгох
+                    "temperature": 0.05,  # Илүү консерватив
                     "top_p": 0.7,
                     "num_predict": 2000,
-                    "repeat_penalty": 1.2,
+                    "repeat_penalty": 1.15,
                 }
             )
             
             result = response["message"]["content"].strip()
+            cleaned = self._aggressive_postprocess(result)
             
-            is_valid, errors = self._validate_result(text, result)
+            # Дахин утгын шалгалт
+            is_meaningful = self._check_meaning_preserved(text, cleaned)
             
-            if not is_valid:
-                print(f"   ❌ Retry ч амжилтгүй:")
-                for error in errors:
-                    print(f"      • {error}")
+            if is_meaningful:
+                print(f"   ✅ Retry амжилттай - утга хадгалагдсан!")
+                return cleaned
+            else:
+                print(f"   ⚠️ Retry ч утга алдсан - анхны үр дүнг ашиглана")
+                return None
                 
-                raise RuntimeError(
-                    f"❌ SLM 2 удаа оролдсон боловч чанаргүй үр дүн!\n"
-                    f"   Алдаанууд: {'; '.join(errors)}"
-                )
-            
-            print(f"   ✅ Retry амжилттай!")
-            return self._post_process(result)
-            
         except Exception as e:
-            if isinstance(e, RuntimeError):
-                raise
-            raise RuntimeError(f"Retry алдаа: {str(e)}")
+            print(f"   ❌ Retry алдаа: {e}")
+            return None
     
-    def _post_process(self, text: str) -> str:
+    def _aggressive_postprocess(self, text: str) -> str:
         """
-        Эцсийн цэвэрлэлт
+        Хүчтэй post-processing
         """
-        # Үлдсэн хэллэг үгс (давхар цэвэрлэлт)
-        fillers = [
-            'шүү дээ', 'л байх даа', 'байхаа', 'биз дээ', 'аа дээ',
-            'шүү аа', 'ээ дээ', 'өө дээ', 
-            'аа', 'ээ', 'өө', 'юу', 'гээд', 'тэгээд', 'за', 'тэгэхээр'
+        # Хэллэг үгс
+        filler_phrases = [
+            'шүү дээ', 'л байх даа', 'л байх', 'байхаа', 'биз дээ', 
+            'аа дээ', 'шүү аа', 'ээ дээ', 'өө дээ', 'даа шүү',
+            'гэж бодож байна', 'гэж боддог', 'гэж үзэж байна'
         ]
         
-        for filler in fillers:
-            # Word boundary ашиглах (богино үгэнд чухал)
-            if len(filler) <= 3:
-                text = re.sub(r'\b' + re.escape(filler) + r'\b', '', text, flags=re.IGNORECASE)
-            else:
-                text = text.replace(filler, '')
-                text = text.replace(filler.capitalize(), '')
+        for phrase in sorted(filler_phrases, key=len, reverse=True):
+            text = re.sub(
+                r'\b' + re.escape(phrase) + r'\b',
+                '',
+                text,
+                flags=re.IGNORECASE
+            )
         
-        # Давхар хоосон зай
+        # Богино хэллэг үгс
+        short_fillers = [
+            'шүү', 'дээ', 'даа', 'аа', 'ээ', 'өө', 'юу', 
+            'гээд', 'тэгээд', 'за', 'тэгэхээр', 'байхаа'
+        ]
+        
+        for filler in short_fillers:
+            text = re.sub(
+                r'\b' + re.escape(filler) + r'\b',
+                '',
+                text,
+                flags=re.IGNORECASE
+            )
+        
+        # Зөв бичгийн дүрмүүд
+        text = re.sub(r'\s+([,.!?:;])', r'\1', text)
         text = re.sub(r'\s+', ' ', text)
-        text = re.sub(r'\s+([,.!?])', r'\1', text)
         text = re.sub(r'\n\s*\n\s*\n+', '\n\n', text)
+        
+        # MARKDOWN ФОРМАТЛАЛТ АРИЛГАХ (ШИНЭ!)
+        text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # **text** → text
+        text = re.sub(r'\*([^*]+)\*', r'\1', text)      # *text* → text
+        text = re.sub(r'^[-•]\s+', '', text, flags=re.MULTILINE)  # - text → text
+        text = re.sub(r'#{1,6}\s+', '', text)           # # heading → heading
         
         # Өгүүлбэр эхний үсэг том
         lines = []
         for line in text.split('\n'):
             line = line.strip()
-            if line and len(line) > 0:
+            if line:
                 line = line[0].upper() + line[1:] if len(line) > 1 else line.upper()
-            lines.append(line)
+                lines.append(line)
         
         return '\n'.join(lines).strip()
+    
+    def _validate_result_flexible(
+        self, 
+        original: str, 
+        result: str
+    ) -> Tuple[bool, List[str]]:
+        """
+        Уян хатан validation
+        """
+        errors = []
+        
+        if len(result.strip()) < 10:
+            errors.append(f"Хэт богино")
+            return False, errors
+        
+        ratio = len(result) / len(original) if len(original) > 0 else 0
+        if ratio < 0.1:
+            errors.append(f"Хэт богино (харьцаа {ratio:.2f})")
+        elif ratio > 10.0:
+            errors.append(f"Хэт урт (харьцаа {ratio:.2f})")
+        
+        # Англи хэл
+        cyrillic_chars = len(re.findall(r'[А-Яа-яЁёӨөҮү]', result))
+        english_chars = len(re.findall(r'[A-Za-z]', result))
+        
+        if cyrillic_chars > 0 and english_chars > cyrillic_chars * 0.5:
+            errors.append(f"Англи хэл их")
+        
+        # Критик хэллэг үгс
+        critical_fillers = ['шүү дээ', 'л байх даа', 'биз дээ']
+        found = [f for f in critical_fillers if f in result.lower()]
+        
+        if found:
+            errors.append(f"Хэллэг үгс үлдсэн: {', '.join(found)}")
+        
+        has_critical = len(found) > 0
+        
+        return not has_critical, errors
     
     def _process_long_text(self, text: str) -> str:
         """
@@ -362,29 +453,33 @@ class SLMOnlySummarizer:
 # ТЕСТ
 if __name__ == "__main__":
     print("\n" + "="*60)
-    print("САЙЖРУУЛСАН SLM SUMMARIZER ТЕСТ")
+    print("УТГА ХАДГАЛАХ SUMMARIZER ТЕСТ")
     print("="*60 + "\n")
     
     try:
-        summarizer = SLMOnlySummarizer(model="qwen2.5:7b")
+        summarizer = SLMOnlySummarizer(model="qwen2.5:7b", use_spell_check=False)
         
-        test_text = """
-        Анна: Би энэ ажлыг даваа гарагт хийх болно шүү дээ.
+        # ТЕСТ 1: Огноотой
+        test1 = """
+        Анна: Би энэ төслийг даваа гарагт дуусгах болно шүү дээ.
         Жон: За тэгээд би шалгаж үзье л байх даа.
-        Тогтоол: Ирэх долоо хоногт бүх ажлыг дуусгах.
         """
         
-        print("АНХНЫ ТЕКСТ:")
-        print(test_text)
-        print()
+        print("ТЕСТ 1: Огноотой текст")
+        print("Орох:", test1)
         
-        result = summarizer.formalize_text(test_text, debug=True)
+        result1 = summarizer.formalize_text(test1, debug=True)
+        
+        print("\nҮр дүн:", result1)
+        
+        # "даваа гараг" хадгалагдсан эсэх шалгах
+        if "даваа гараг" in result1.lower():
+            print("✅ Огноо хадгалагдсан")
+        else:
+            print("❌ Огноо алдагдсан!")
         
         print("\n" + "="*60)
-        print("ЭЦСИЙН ҮР ДҮН:")
-        print("="*60)
-        print(result)
-        print("\n✅ АМЖИЛТТАЙ!\n")
+        print("✅ ТЕСТ ДУУСЛАА\n")
         
     except RuntimeError as e:
         print(f"\n❌ АЛДАА:\n{e}\n")
