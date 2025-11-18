@@ -1,0 +1,1441 @@
+{
+  "samples": [
+    {
+      "id": "synthetic_0000",
+      "input": "Жон: энэ жилийн эцэст хурал зохион байгуулах бол яаралтай байгаа тул даа шүү",
+      "output": "Ж.Жон хурал зохион байгуулна энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Жон"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0001",
+      "input": "Оюунаа: чухал асуудал гэж бодож байна",
+      "output": "О.Оюунаа чухал асуудал гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Оюунаа"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0002",
+      "input": "Хурлын дүгнэлт: төслийг дуусгах",
+      "output": "Хурлын дүгнэлт: төслийг дуусгах.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0003",
+      "input": "Жон: Миний санал бол хурал зохион байгуулах шүү дээ",
+      "output": "Ж.Жон хурал зохион байгуулна.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Жон"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0004",
+      "input": "Нара: Миний санал бол тайлан бэлдэх даа шүү",
+      "output": "Н.Нара тайлан бэлтгэнэ.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0005",
+      "input": "Саруул: Энэ асуудлын талаар чухал асуудал",
+      "output": "С.Саруул Энэ асуудлын талаар чухал асуудал.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0006",
+      "input": "Саруул: зөв шийдэл гэж бодож байна байхаа",
+      "output": "С.Саруул зөв шийдэл гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0007",
+      "input": "Жон: Хэрэв боломж олдвол бол график үүсгэх ирэх сард шүү дээ",
+      "output": "Ж.Жон график үүсгэнэ ирэх сард.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Жон"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0008",
+      "input": "Болд: Энэ асуудлын талаар анхаарах шаардлагатай байхаа",
+      "output": "Б.Болд Энэ асуудлын талаар анхаарах шаардлагатай.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Болд"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0009",
+      "input": "Цэцэг: анхаарах шаардлагатай гэж бодож байна даа шүү",
+      "output": "Ц.Цэцэг анхаарах шаардлагатай гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Цэцэг"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0010",
+      "input": "Болд: Энэ асуудлын талаар анхаарах шаардлагатай даа шүү",
+      "output": "Б.Болд Энэ асуудлын талаар анхаарах шаардлагатай.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Болд"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0011",
+      "input": "Саруул: сарын эцэст тайлан бэлдэх бол яаралтай байгаа тул даа шүү",
+      "output": "С.Саруул тайлан бэлтгэнэ сарын эцэст.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0012",
+      "input": "Оюунаа: Миний санал бол хяналт тавих",
+      "output": "О.Оюунаа хяналт тавих болов.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Оюунаа"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0013",
+      "input": "Нара: Энэ асуудлын талаар зөв шийдэл даа шүү",
+      "output": "Н.Нара Энэ асуудлын талаар зөв шийдэл.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0014",
+      "input": "Нара: Хэрэв цаг гарвал бол график үүсгэх даваа гарагт байхаа",
+      "output": "Н.Нара график үүсгэнэ даваа гарагт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0015",
+      "input": "Нара: Би шалгалт хийх даваа гарагт л байх даа",
+      "output": "Н.Нара шалгалт гүйцэтгэх даваа гарагт.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0016",
+      "input": "Эрдэнэ: Хэрэв боломж олдвол бол илтгэл тавих даваа гарагт",
+      "output": "Э.Эрдэнэ илтгэл тавих болов даваа гарагт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Эрдэнэ"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0017",
+      "input": "Шийдвэр: өгөгдөл цуглуулах энэ жилийн эцэст",
+      "output": "ШИЙДСЭН: өгөгдөл цуглуулах энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0018",
+      "input": "Оюунаа: анхаарах шаардлагатай гэж бодож байна шүү дээ",
+      "output": "О.Оюунаа анхаарах шаардлагатай гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Оюунаа"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0019",
+      "input": "ТОГТСОН: мягмар гарагт хурал зохион байгуулахаар тогтов",
+      "output": "ТОГТСОН: мягмар гарагт хурал зохион байгуулахаар тогтов.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0020",
+      "input": "Дорж: Энэ асуудлын талаар анхаарах шаардлагатай л байх даа",
+      "output": "Д.Дорж Энэ асуудлын талаар анхаарах шаардлагатай.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0021",
+      "input": "Анна: Миний санал бол төслийг дуусгах л байх даа",
+      "output": "А.Анна төслийг дуусгах болов.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0022",
+      "input": "Дорж: Миний санал бол тайлан бэлдэх даа шүү",
+      "output": "Д.Дорж тайлан бэлтгэнэ.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0023",
+      "input": "Оюунаа: Энэ асуудлын талаар сайн санал байхаа",
+      "output": "О.Оюунаа Энэ асуудлын талаар сайн санал.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Оюунаа"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0024",
+      "input": "Саруул: чухал асуудал гэж бодож байна шүү дээ",
+      "output": "С.Саруул чухал асуудал гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0025",
+      "input": "Анна: Энэ асуудлын талаар анхаарах шаардлагатай",
+      "output": "А.Анна Энэ асуудлын талаар анхаарах шаардлагатай.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0026",
+      "input": "Анна: сайн санал гэж бодож байна л байх даа",
+      "output": "А.Анна сайн санал гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0027",
+      "input": "Шийдвэр: хурал зохион байгуулах сарын эцэст",
+      "output": "ШИЙДСЭН: хурал зохион байгуулах сарын эцэст.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0028",
+      "input": "Анна: маргааш төслийг дуусгах бол яаралтай байгаа тул даа шүү",
+      "output": "А.Анна төслийг дуусгах болов маргааш.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0029",
+      "input": "Анна: Хэрэв нөөц байвал бол график үүсгэх энэ жилийн эцэст даа шүү",
+      "output": "А.Анна график үүсгэнэ энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0030",
+      "input": "Болд: Энэ асуудлын талаар зөв шийдэл л байх даа",
+      "output": "Б.Болд Энэ асуудлын талаар зөв шийдэл.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Болд"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0031",
+      "input": "Эрдэнэ: Миний санал бол шалгалт хийх",
+      "output": "Э.Эрдэнэ шалгалт гүйцэтгэх.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Эрдэнэ"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0032",
+      "input": "Хурлын дүгнэлт: шалгалт хийх",
+      "output": "Хурлын дүгнэлт: шалгалт хийх.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0033",
+      "input": "Дорж: даваа гарагт төслийг дуусгах бол чухал учраас даа шүү",
+      "output": "Д.Дорж төслийг дуусгах болов даваа гарагт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0034",
+      "input": "Саруул: Энэ асуудлын талаар зөв шийдэл даа шүү",
+      "output": "С.Саруул Энэ асуудлын талаар зөв шийдэл.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0035",
+      "input": "Дорж: чухал асуудал гэж бодож байна л байх даа",
+      "output": "Д.Дорж чухал асуудал гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0036",
+      "input": "Саруул: ирэх сард хяналт тавих бол яаралтай байгаа тул байхаа",
+      "output": "С.Саруул хяналт тавих болов ирэх сард.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0037",
+      "input": "Цэцэг: ирэх долоо хоногт тайлан бэлдэх бол шаардлагатай тул л байх даа",
+      "output": "Ц.Цэцэг тайлан бэлтгэнэ ирэх долоо хоногт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Цэцэг"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0038",
+      "input": "Цэцэг: сарын эцэст шалгалт хийх хэрэгтэй л байх даа",
+      "output": "Ц.Цэцэг шалгалт гүйцэтгэх сарын эцэст.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Цэцэг"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0039",
+      "input": "Анна: Миний санал бол баримт бичиг бэлдэх",
+      "output": "А.Анна баримт бичиг бэлтгэнэ.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0040",
+      "input": "Бат: Энэ асуудлын талаар чухал асуудал",
+      "output": "Б.Бат Энэ асуудлын талаар чухал асуудал.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Бат"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0041",
+      "input": "Хурлын дүгнэлт: илтгэл тавих",
+      "output": "Хурлын дүгнэлт: илтгэл тавих.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0042",
+      "input": "Нара: сарын эцэст өгөгдөл цуглуулах хэрэгтэй шүү дээ",
+      "output": "Н.Нара өгөгдөл цуглуулна сарын эцэст.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0043",
+      "input": "Саруул: зөв шийдэл гэж бодож байна л байх даа",
+      "output": "С.Саруул зөв шийдэл гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0044",
+      "input": "Бат: Би хурал зохион байгуулах ирэх сард байхаа",
+      "output": "Б.Бат хурал зохион байгуулна ирэх сард.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Бат"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0045",
+      "input": "Саруул: Энэ асуудлын талаар чухал асуудал шүү дээ",
+      "output": "С.Саруул Энэ асуудлын талаар чухал асуудал.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0046",
+      "input": "ТОГТСОН: маргааш дүгнэлт гаргахаар тогтов",
+      "output": "ТОГТСОН: маргааш дүгнэлт гаргахаар тогтов.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0047",
+      "input": "Болд: Би дүгнэлт гаргах энэ жилийн эцэст даа шүү",
+      "output": "Б.Болд дүгнэлт гаргана энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Болд"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0048",
+      "input": "Хурлын дүгнэлт: баримт бичиг бэлдэх",
+      "output": "Хурлын дүгнэлт: баримт бичиг бэлдэх.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0049",
+      "input": "Эрдэнэ: даваа гарагт хяналт тавих бол шаардлагатай тул",
+      "output": "Э.Эрдэнэ хяналт тавих болов даваа гарагт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Эрдэнэ"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0050",
+      "input": "Жон: Энэ асуудлын талаар зөв шийдэл шүү дээ",
+      "output": "Ж.Жон Энэ асуудлын талаар зөв шийдэл.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Жон"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0051",
+      "input": "Бат: энэ жилийн эцэст төслийг дуусгах бол шаардлагатай тул",
+      "output": "Б.Бат төслийг дуусгах болов энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Бат"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0052",
+      "input": "Хурлын дүгнэлт: тайлан бэлдэх",
+      "output": "Хурлын дүгнэлт: тайлан бэлдэх.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0053",
+      "input": "Хурлын дүгнэлт: дүгнэлт гаргах",
+      "output": "Хурлын дүгнэлт: дүгнэлт гаргах.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0054",
+      "input": "Анна: ирэх сард дүгнэлт гаргах бол яаралтай байгаа тул шүү дээ",
+      "output": "А.Анна дүгнэлт гаргана ирэх сард.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0055",
+      "input": "Болд: зөв шийдэл гэж бодож байна л байх даа",
+      "output": "Б.Болд зөв шийдэл гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Болд"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0056",
+      "input": "Эрдэнэ: Энэ асуудлын талаар сайн санал шүү дээ",
+      "output": "Э.Эрдэнэ Энэ асуудлын талаар сайн санал.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Эрдэнэ"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0057",
+      "input": "Нара: ирэх долоо хоногт дүгнэлт гаргах хэрэгтэй шүү дээ",
+      "output": "Н.Нара дүгнэлт гаргана ирэх долоо хоногт.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0058",
+      "input": "Саруул: энэ жилийн эцэст баримт бичиг бэлдэх хэрэгтэй",
+      "output": "С.Саруул баримт бичиг бэлтгэнэ энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0059",
+      "input": "Анна: Миний санал бол баримт бичиг бэлдэх л байх даа",
+      "output": "А.Анна баримт бичиг бэлтгэнэ.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0060",
+      "input": "Тогтоол: ирэх сард өгөгдөл цуглуулах",
+      "output": "ТОГТСОН: ирэх сард өгөгдөл цуглуулах.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0061",
+      "input": "Тогтоол: сарын эцэст хяналт тавих",
+      "output": "ТОГТСОН: сарын эцэст хяналт тавих.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0062",
+      "input": "Нара: Би дүгнэлт гаргах энэ жилийн эцэст даа шүү",
+      "output": "Н.Нара дүгнэлт гаргана энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0063",
+      "input": "Дорж: анхаарах шаардлагатай гэж бодож байна л байх даа",
+      "output": "Д.Дорж анхаарах шаардлагатай гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0064",
+      "input": "Эрдэнэ: ирэх сард тайлан бэлдэх хэрэгтэй байхаа",
+      "output": "Э.Эрдэнэ тайлан бэлтгэнэ ирэх сард.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Эрдэнэ"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0065",
+      "input": "Тогтоол: ирэх долоо хоногт өгөгдөл цуглуулах",
+      "output": "ТОГТСОН: ирэх долоо хоногт өгөгдөл цуглуулах.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0066",
+      "input": "Оюунаа: Энэ асуудлын талаар зөв шийдэл л байх даа",
+      "output": "О.Оюунаа Энэ асуудлын талаар зөв шийдэл.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Оюунаа"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0067",
+      "input": "Оюунаа: Хэрэв нөөц байвал бол баримт бичиг бэлдэх сарын эцэст даа шүү",
+      "output": "О.Оюунаа баримт бичиг бэлтгэнэ сарын эцэст.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Оюунаа"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0068",
+      "input": "Саруул: даваа гарагт төслийг дуусгах хэрэгтэй байхаа",
+      "output": "С.Саруул төслийг дуусгах болов даваа гарагт.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0069",
+      "input": "Дорж: Хэрэв боломж олдвол бол дүгнэлт гаргах даваа гарагт",
+      "output": "Д.Дорж дүгнэлт гаргана даваа гарагт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0070",
+      "input": "Нара: Миний санал бол төслийг дуусгах л байх даа",
+      "output": "Н.Нара төслийг дуусгах болов.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0071",
+      "input": "Жон: Энэ асуудлын талаар сайн санал",
+      "output": "Ж.Жон Энэ асуудлын талаар сайн санал.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Жон"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0072",
+      "input": "Тогтоол: сарын эцэст дүгнэлт гаргах",
+      "output": "ТОГТСОН: сарын эцэст дүгнэлт гаргах.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0073",
+      "input": "Тогтоол: мягмар гарагт график үүсгэх",
+      "output": "ТОГТСОН: мягмар гарагт график үүсгэх.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0074",
+      "input": "Анна: энэ жилийн эцэст илтгэл тавих бол яаралтай байгаа тул",
+      "output": "А.Анна илтгэл тавих болов энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0075",
+      "input": "Жон: мягмар гарагт дүгнэлт гаргах бол шаардлагатай тул даа шүү",
+      "output": "Ж.Жон дүгнэлт гаргана мягмар гарагт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Жон"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0076",
+      "input": "Шийдвэр: хурал зохион байгуулах мягмар гарагт",
+      "output": "ШИЙДСЭН: хурал зохион байгуулах мягмар гарагт.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0077",
+      "input": "ТОГТСОН: энэ жилийн эцэст тайлан бэлдэхаар тогтов",
+      "output": "ТОГТСОН: энэ жилийн эцэст тайлан бэлдэхаар тогтов.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0078",
+      "input": "Анна: ирэх сард хурал зохион байгуулах хэрэгтэй байхаа",
+      "output": "А.Анна хурал зохион байгуулна ирэх сард.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0079",
+      "input": "Жон: сарын эцэст график үүсгэх бол чухал учраас байхаа",
+      "output": "Ж.Жон график үүсгэнэ сарын эцэст.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Жон"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0080",
+      "input": "Бат: Энэ асуудлын талаар анхаарах шаардлагатай даа шүү",
+      "output": "Б.Бат Энэ асуудлын талаар анхаарах шаардлагатай.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Бат"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0081",
+      "input": "Нара: даваа гарагт илтгэл тавих хэрэгтэй",
+      "output": "Н.Нара илтгэл тавих болов даваа гарагт.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0082",
+      "input": "Анна: Хэрэв боломж олдвол бол хурал зохион байгуулах мягмар гарагт л байх даа",
+      "output": "А.Анна хурал зохион байгуулна мягмар гарагт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0083",
+      "input": "Нара: Хэрэв цаг гарвал бол график үүсгэх ирэх долоо хоногт байхаа",
+      "output": "Н.Нара график үүсгэнэ ирэх долоо хоногт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Нара"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0084",
+      "input": "Оюунаа: Хэрэв боломж олдвол бол өгөгдөл цуглуулах маргааш шүү дээ",
+      "output": "О.Оюунаа өгөгдөл цуглуулна маргааш.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Оюунаа"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0085",
+      "input": "Анна: зөв шийдэл гэж бодож байна шүү дээ",
+      "output": "А.Анна зөв шийдэл гэж бодож байна.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0086",
+      "input": "Дорж: мягмар гарагт тайлан бэлдэх хэрэгтэй байхаа",
+      "output": "Д.Дорж тайлан бэлтгэнэ мягмар гарагт.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0087",
+      "input": "Тогтоол: даваа гарагт шалгалт хийх",
+      "output": "ТОГТСОН: даваа гарагт шалгалт хийх.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0088",
+      "input": "Шийдвэр: өгөгдөл цуглуулах маргааш",
+      "output": "ШИЙДСЭН: өгөгдөл цуглуулах маргааш.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0089",
+      "input": "Анна: Энэ асуудлын талаар зөв шийдэл",
+      "output": "А.Анна Энэ асуудлын талаар зөв шийдэл.",
+      "metadata": {
+        "template_type": "discussion",
+        "has_dates": false,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0090",
+      "input": "Дорж: ирэх сард хяналт тавих бол чухал учраас",
+      "output": "Д.Дорж хяналт тавих болов ирэх сард.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0091",
+      "input": "Саруул: ирэх сард шалгалт хийх хэрэгтэй даа шүү",
+      "output": "С.Саруул шалгалт гүйцэтгэх ирэх сард.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0092",
+      "input": "Саруул: Би хурал зохион байгуулах маргааш даа шүү",
+      "output": "С.Саруул хурал зохион байгуулна маргааш.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Саруул"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0093",
+      "input": "ТОГТСОН: энэ жилийн эцэст дүгнэлт гаргахаар тогтов",
+      "output": "ТОГТСОН: энэ жилийн эцэст дүгнэлт гаргахаар тогтов.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    },
+    {
+      "id": "synthetic_0094",
+      "input": "Оюунаа: мягмар гарагт өгөгдөл цуглуулах бол яаралтай байгаа тул даа шүү",
+      "output": "О.Оюунаа өгөгдөл цуглуулна мягмар гарагт.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Оюунаа"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0095",
+      "input": "Анна: Би шалгалт хийх ирэх долоо хоногт",
+      "output": "А.Анна шалгалт гүйцэтгэх ирэх долоо хоногт.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0096",
+      "input": "Дорж: Би шалгалт хийх мягмар гарагт л байх даа",
+      "output": "Д.Дорж шалгалт гүйцэтгэх мягмар гарагт.",
+      "metadata": {
+        "template_type": "action_simple",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Дорж"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0097",
+      "input": "Анна: Хэрэв нөөц байвал бол баримт бичиг бэлдэх энэ жилийн эцэст байхаа",
+      "output": "А.Анна баримт бичиг бэлтгэнэ энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Анна"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0098",
+      "input": "Цэцэг: Хэрэв цаг гарвал бол илтгэл тавих ирэх сард даа шүү",
+      "output": "Ц.Цэцэг илтгэл тавих болов ирэх сард.",
+      "metadata": {
+        "template_type": "action_complex",
+        "has_dates": true,
+        "has_fillers": true,
+        "synthetic": true,
+        "quality": "medium",
+        "participants": [
+          "Цэцэг"
+        ]
+      }
+    },
+    {
+      "id": "synthetic_0099",
+      "input": "Шийдвэр: илтгэл тавих энэ жилийн эцэст",
+      "output": "ШИЙДСЭН: илтгэл тавих энэ жилийн эцэст.",
+      "metadata": {
+        "template_type": "decision",
+        "has_dates": true,
+        "has_fillers": false,
+        "synthetic": true,
+        "quality": "medium"
+      }
+    }
+  ]
+}
